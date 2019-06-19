@@ -1,0 +1,24 @@
+FROM dockerhub.cisco.com/mcsqd-dev-docker/centos6_32
+COPY cmc_mmp_6.repo /etc/yum.repos.d/cmc_mmp.repo
+COPY fakecombine.pem /tmp/
+ENV LD_LIBRARY_PATH /usr/lib/oracle/11.2/client/lib
+
+RUN set -x && \
+    usermod -u 601 nobody && \
+    groupmod -g 601 nobody && \
+    find / -user 99 -exec chown -h nobody {} \; && \
+    find / -group 99 -exec chgrp -h nobody {} \; || true
+RUN set -x && \
+    yum -y install WBXmonx-3.4-12.i686
+RUN set -x && \
+    yum -y install libaio.so.1 && \
+    curl -fSLOk https://github.com/fankaiyuan/OracleClientPackage/raw/master/oracle-instantclient11.2-basiclite-11.2.0.4.0-1.i386.rpm && \
+    curl -fSLOk https://github.com/fankaiyuan/OracleClientPackage/raw/master/oracle-instantclient11.2-odbc-11.2.0.4.0-1.i386.rpm && \
+    curl -fSLOk https://github.com/fankaiyuan/OracleClientPackage/raw/master/oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.i386.rpm && \
+    yum -y install oracle-instantclient11.2-basiclite-11.2.0.4.0-1.i386.rpm --nogpgcheck && \
+    yum -y install oracle-instantclient11.2-odbc-11.2.0.4.0-1.i386.rpm --nogpgcheck && \
+    yum -y install oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.i386.rpm --nogpgcheck && \
+    yum -y clean all && \
+    rm -rf oracle-instantclient11.2-basiclite-11.2.0.4.0-1.i386.rpm oracle-instantclient11.2-odbc-11.2.0.4.0-1.i386.rpm oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.i386.rpm
+
+CMD ["bash"]

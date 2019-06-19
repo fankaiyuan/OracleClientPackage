@@ -1,0 +1,20 @@
+FROM registry-qa.webex.com/os/centos7:0.5
+COPY cmc_mmp_7.repo /etc/yum.repos.d/cmc_mmp.repo
+COPY fakecombine.pem /tmp/
+ENV LD_LIBRARY_PATH /usr/lib/oracle/11.2/client64/lib:/usr/bin:$LD_LIBRARY_PATH
+
+RUN set -x && \
+    yum -y clean all && \
+    yum -y install libaio && \
+    curl -fSLOk https://github.com/TyrionQu/OracleClientPackage/raw/master/oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm && \
+    curl -fSLOk https://github.com/TyrionQu/OracleClientPackage/raw/master/oracle-instantclient11.2-odbc-11.2.0.4.0-1.x86_64.rpm && \
+    curl -fSLOk https://github.com/TyrionQu/OracleClientPackage/raw/master/oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.x86_64.rpm && \
+    yum -y install oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm --nogpgcheck && \
+    yum -y install oracle-instantclient11.2-odbc-11.2.0.4.0-1.x86_64.rpm --nogpgcheck && \
+    yum -y install oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.x86_64.rpm --nogpgcheck && \
+    yum -y clean all && \
+    rm -rf oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm oracle-instantclient11.2-odbc-11.2.0.4.0-1.x86_64.rpm oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.x86_64.rpm
+RUN set -x && \
+    yum -y install WBXmonx-3.4-12.x86_64
+
+CMD ["bash"]
